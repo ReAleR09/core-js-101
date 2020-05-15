@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* ************************************************************************************************
  *                                                                                                *
  * Plese read the following tutorial before implementing tasks:                                   *
@@ -20,8 +21,11 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  this.width = width;
+  this.height = height;
+
+  this.getArea = () => this.width * this.height;
 }
 
 
@@ -35,8 +39,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 
@@ -51,8 +55,10 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const obj = JSON.parse(json);
+  Object.setPrototypeOf(obj, proto);
+  return obj;
 }
 
 
@@ -110,33 +116,131 @@ function fromJSON(/* proto, json */) {
  *  For more examples see unit tests.
  */
 
+const ONLY_ONE_TIME = 'Element, id and pseudo-element should not occur more then one time inside the selector';
+const INCORRECT_ORDER = 'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element';
+
+function Elementy() {
+  this._element = false;
+  this._id = false;
+  this._classes = [];
+  this._attr = false;
+  this._pseudoClass = [];
+  this._pseudoElement = false;
+}
+
+Elementy.prototype = {
+  element(value) {
+    if (this._element) {
+      throw Error(ONLY_ONE_TIME);
+    }
+    if (this._id) {
+      throw Error(INCORRECT_ORDER);
+    }
+    this._element = value;
+    return this;
+  },
+  id(value) {
+    if (this._id) {
+      throw Error(ONLY_ONE_TIME);
+    }
+    if (this._classes.length > 0) {
+      throw Error(INCORRECT_ORDER);
+    }
+    if (this._pseudoElement) {
+      throw Error(INCORRECT_ORDER);
+    }
+    this._id = value;
+    return this;
+  },
+  class(value) {
+    if (this._attr) {
+      throw Error(INCORRECT_ORDER);
+    }
+    this._classes.push(value);
+    return this;
+  },
+  attr(value) {
+    if (this._pseudoClass.length > 0) {
+      throw Error(INCORRECT_ORDER);
+    }
+    this._attr = value;
+    return this;
+  },
+  pseudoClass(value) {
+    if (this._pseudoElement) {
+      throw Error(INCORRECT_ORDER);
+    }
+    this._pseudoClass.push(value);
+    return this;
+  },
+  pseudoElement(value) {
+    if (this._pseudoElement) {
+      throw Error(ONLY_ONE_TIME);
+    }
+    this._pseudoElement = value;
+    return this;
+  },
+  stringify() {
+    let result = '';
+    if (this._element) {
+      result += this._element;
+    }
+    if (this._id) {
+      result += `#${this._id}`;
+    }
+    if (this._attr) {
+      result += `[${this._attr}]`;
+    }
+    if (this._classes.length > 0) {
+      result += `.${this._classes.join('.')}`;
+    }
+    if (this._pseudoClass.length > 0) {
+      result += this._pseudoClass.map((cl) => `:${cl}`).join('');
+    }
+    if (this._pseudoElement) {
+      result += `::${this._pseudoElement}`;
+    }
+
+    return result;
+  },
+};
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+
+  element(value) {
+    const el = new Elementy();
+    return el.element(value);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    const el = new Elementy();
+    return el.id(value);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    const el = new Elementy();
+    return el.class(value);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    const el = new Elementy();
+    return el.pseudoClass(value);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    const el = new Elementy();
+    return el.pseudoElement(value);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    const el = new Elementy();
+    return el.attr(value);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    return {
+      stringify: () => `${selector1.stringify()} ${combinator} ${selector2.stringify()}`
+    };
   },
 };
 
