@@ -318,8 +318,8 @@ function isString(value) {
  *   'Q♠' => 50
  *   'K♠' => 51
  */
-function getCardId(value) {
-  value = value.replace('10', 'T');
+function getCardId(input) {
+  const value = input.replace('10', 'T');
   const values = [
     'A',
     '2',

@@ -74,7 +74,7 @@ function getFactorial(n) {
  */
 function getSumBetweenNumbers(n1, n2) {
   let res = 0;
-  for (let i = n1; i <= n2; i++) {
+  for (let i = n1; i <= n2; i += 1) {
     res += i;
   }
   return res;
@@ -134,9 +134,13 @@ function isTriangle(a, b, c) {
  *
  */
 function doRectanglesOverlap(rect1, rect2) {
-  const pointBelongsToRect = (x, y, rect) => y >= rect.top && y <= rect.top + rect.height && x >= rect.left && x <= rect.left + rect.width;
+  const pointBelongsToRect = (x, y, rect) => y >= rect.top
+    && y <= rect.top + rect.height
+    && x >= rect.left
+    && x <= rect.left + rect.width;
 
-  return pointBelongsToRect(rect1.left, rect1.top, rect2) || pointBelongsToRect(rect2.left, rect2.top, rect1);
+  return pointBelongsToRect(rect1.left, rect1.top, rect2)
+    || pointBelongsToRect(rect2.left, rect2.top, rect1);
 }
 
 

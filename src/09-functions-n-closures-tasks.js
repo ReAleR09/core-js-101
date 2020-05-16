@@ -62,9 +62,8 @@ function getPowerFunction(exponent) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
+function getPolynom(...consts) {
   if (arguments.length < 1) return null;
-  const consts = arguments;
 
   return (x) => {
     let res = 0;
@@ -128,6 +127,7 @@ function retry(func, attempts) {
         leftAttempts -= 1;
       }
     }
+    return null;
   };
 }
 
@@ -180,9 +180,7 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn, ...args1) {
-  return (...args2) => {
-    return fn(...args1, ...args2);
-  };
+  return (...args2) => fn(...args1, ...args2);
 }
 
 
